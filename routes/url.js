@@ -10,6 +10,21 @@ createDB.sync().then(() => {
 
 const baseURL = `http://localhost:3001/shorten-url`;
 
+router.get(`/`, async (req, res) => {
+  try {
+    const list = await URL.findAll();
+    const urls = list.map((url) => ({
+      ...url.dataValues,
+      short_url: `${baseURL}/${url.short_url}`,
+    }));
+    return res.status(201).json({ status: "OK", urls: urls });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ status: "FAILED", message: "Something went wrong!" });
+  }
+});
+
 router.post(`/`, async (req, res) => {
   try {
     const { long_url } = req.body;
